@@ -2,17 +2,16 @@ import { useToast } from '@chakra-ui/toast';
 import * as Sentry from '@sentry/react';
 import { OrderChatGroup, useBusinessChats } from 'app/api/business/chat/useBusinessChats';
 import { useOrders } from 'app/api/order/useOrders';
+import { useOrdersLocalStorageTimes } from 'app/api/order/useOrdersLocalStorageTimes';
 import { useContextApi } from 'app/state/api/context';
 import { useContextBusiness } from 'app/state/business/context';
-import { Business, Order, OrderItem, OrderStatus, WithId } from 'appjusto-types';
+import { Business, Order, OrderStatus, WithId } from 'appjusto-types';
 import { CustomToast } from 'common/components/CustomToast';
 //@ts-ignore
-import bellDing from 'common/sounds/bell-ding.mp3';
+//import bellDing from 'common/sounds/bell-ding.mp3';
 import React from 'react';
-import useSound from 'use-sound';
-import { updateLocalStorageOrders, updateLocalStorageOrderTime } from 'utils/functions';
 
-const fakeItem = (price: number, qtd: number): OrderItem => {
+/*const fakeItem = (price: number, qtd: number): OrderItem => {
   return {
     id: 'GLubXi2MzKYvZQDSrVpq',
     product: {
@@ -36,7 +35,7 @@ const fakeOrder: Order = {
     name: 'Renan',
     // cpf: '35214602820',
   },
-  /*courier: {
+  courier: {
     id: 'n9IBTFplN1bnjHHfqhNcVJTaXc43',
     name: 'Kelly Slater',
     mode: 'motocycle',
@@ -45,7 +44,7 @@ const fakeOrder: Order = {
       latitude: -8.0591539,
       longitude: -34.9063069,
     },
-  },*/
+  },
   business: {
     id: 'QZYurHCMsqZxTIQyQqq3',
     name: 'Itapuama vegan',
@@ -81,7 +80,7 @@ const fakeOrder: Order = {
     polyline: '',
     issue: null,
   },
-};
+};*/
 
 export type localOrderType = { code: string; time: number };
 
@@ -93,6 +92,7 @@ interface ContextProps {
   newChatMessages: string[];
   getNotReadChatMessages(orderId: string, counterPartId: string): string[];
   getOrderById(id: string): WithId<Order> | undefined;
+  getLocalStorageOrderTime(orderId: string): number | null;
   //createFakeOrder(): void;
   changeOrderStatus(orderId: string, status: OrderStatus): void;
   setOrderCookingTime(orderId: string, cookingTime: number | null): void;
@@ -118,13 +118,16 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   const { business } = useContextBusiness();
   const hookOrders = useOrders(statuses, business?.id);
   const chats = useBusinessChats(hookOrders);
+  const { updateLocalStorageOrderTime, getLocalStorageOrderTime } = useOrdersLocalStorageTimes(
+    hookOrders
+  );
 
   //state
   const [orders, setOrders] = React.useState<WithId<Order>[]>([]);
   const [newChatMessages, setNewChatMessages] = React.useState<string[]>([]);
 
   // order sound
-  const [playBell] = useSound(bellDing, { volume: 1 });
+  //const [playBell] = useSound(bellDing, { volume: 1 });
 
   //Development
   /*const createFakeOrder = async () => {
@@ -175,7 +178,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         Sentry.captureException(error);
       }
     },
-    [api, toast]
+    [api, toast, updateLocalStorageOrderTime]
   );
 
   const setOrderCookingTime = async (orderId: string, cookingTime: number | null) => {
@@ -215,9 +218,8 @@ export const OrdersContextProvider = (props: ProviderProps) => {
   React.useEffect(() => {
     if (hookOrders) {
       setOrders(hookOrders);
-      updateLocalStorageOrders(hookOrders, playBell);
     }
-  }, [hookOrders, playBell]);
+  }, [hookOrders]);
 
   React.useEffect(() => {
     if (chats.length > 0) {
@@ -245,6 +247,7 @@ export const OrdersContextProvider = (props: ProviderProps) => {
         newChatMessages,
         getNotReadChatMessages,
         getOrderById,
+        getLocalStorageOrderTime,
         //createFakeOrder,
         changeOrderStatus,
         setOrderCookingTime,

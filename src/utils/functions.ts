@@ -67,7 +67,7 @@ export const getAlgoliaFieldDateAndHour = (timestamp: firebase.firestore.Timesta
 };
 
 // Orders times
-export const updateLocalStorageOrders = (orders: WithId<Order>[], soundAlert: any) => {
+/*export const updateLocalStorageOrders = (orders: WithId<Order>[], soundAlert: any) => {
   if (orders.length > 0) {
     const filteredOrders = orders
       .filter((order) => order.status === 'confirmed' || order.status === 'preparing')
@@ -114,7 +114,7 @@ export const updateLocalStorageOrderTime = (orderId: string) => {
     return true;
   }
   return false;
-};
+};*/
 
 export const getTimeUntilNow = (created: number, reverse: boolean = false) => {
   const now = new Date().getTime();

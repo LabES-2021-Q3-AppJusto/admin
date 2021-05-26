@@ -4,7 +4,7 @@ import { Order, WithId } from 'appjusto-types';
 import { ReactComponent as Alarm } from 'common/img/alarm_outlined.svg';
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { getLocalStorageOrderTime, getTimeUntilNow, orderCancelator } from 'utils/functions';
+import { getTimeUntilNow, orderCancelator } from 'utils/functions';
 import { t } from 'utils/i18n';
 import { useOrdersContext } from '../context';
 
@@ -31,7 +31,7 @@ interface Props {
 export const OrdersKanbanListItem = ({ order }: Props) => {
   // context
   const { url } = useRouteMatch();
-  const { business, changeOrderStatus } = useOrdersContext();
+  const { business, changeOrderStatus, getLocalStorageOrderTime } = useOrdersContext();
   const arrivalTime = useOrderArrivalTimes(order);
 
   // state
@@ -68,7 +68,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       return clearInterval(timeInterval);
     }
     return () => clearInterval(timeInterval);
-  }, [order.id, order.status]);
+  }, [order.id, order.status, getLocalStorageOrderTime]);
 
   React.useEffect(() => {
     const orderAcceptanceTime = business?.orderAcceptanceTime
@@ -85,6 +85,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     }
   }, [order, elapsedTime, business?.orderAcceptanceTime, changeOrderStatus, cookingTime]);
 
+  console.log(elapsedTime);
   // UI
   if (order.status === 'canceled') {
     return (
@@ -138,17 +139,23 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
             ) : (
               <>
                 <Text fontWeight="700">{t('Pedido à caminho')}</Text>
-                {arrivalTime && arrivalTime > 0 ? (
-                  <Text color="gray.700" fontWeight="500">
-                    {t(
-                      `Aprox. ${
-                        arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                      }`
-                    )}
-                  </Text>
+                {arrivalTime ? (
+                  arrivalTime > 0 ? (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(
+                        `Aprox. ${
+                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
+                        }`
+                      )}
+                    </Text>
+                  ) : (
+                    <Text color="gray.700" fontWeight="500">
+                      {t(`Menos de 1 minuto`)}
+                    </Text>
+                  )
                 ) : (
                   <Text color="gray.700" fontWeight="500">
-                    {t(`Menos de 1 minuto`)}
+                    {t(`Calculando...`)}
                   </Text>
                 )}
               </>
