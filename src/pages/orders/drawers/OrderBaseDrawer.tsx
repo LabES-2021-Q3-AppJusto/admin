@@ -165,7 +165,7 @@ export const OrderBaseDrawer = ({
                       onClick={PrimaryButtonFunction}
                       //fontSize={order?.status === 'confirmed' ? '20px' : '15px'}
                     >
-                      {t(PrimaryButtonLabel)}
+                      <Text as="span">{t(PrimaryButtonLabel)}</Text>
                     </Button>
                   )}
                 </Flex>

@@ -47,7 +47,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
     isDelivered,
     orderDispatchingText,
   } = useOrderDeliveryInfos(order);
-
+  console.log(isMatched);
   // state
   const [elapsedTime, setElapsedTime] = React.useState<number | null>(0);
 
@@ -120,7 +120,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
-            <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+            <Text fontSize="xs" lineHeight="lg" fontWeight="500" translate="no">
               {`{${order.consumer.name ?? 'N/I'}}`}
             </Text>
             <CodeLink url={url} orderId={order.id} code={order.code} />
@@ -148,44 +148,35 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
       >
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
-            <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+            <Text fontSize="xs" lineHeight="lg" fontWeight="500" translate="no">
               {`{${order.consumer.name ?? 'N/I'}}`}
             </Text>
             <CodeLink url={url} orderId={order.id} code={order.code} />
           </Box>
           <Flex flexDir="column" color="gray.700" fontSize="xs" alignItems="flex-end">
-            {isDelivered ? (
-              <Text fontWeight="700">{t('Pedido entregue')}</Text>
+            <Text fontWeight="700">{t('Pedido a caminho')}</Text>
+            {arrivalTime ? (
+              arrivalTime > 0 ? (
+                <Text color="gray.700" fontWeight="500">
+                  {t(
+                    `Aprox. ${arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'}`
+                  )}
+                </Text>
+              ) : (
+                <Text color="gray.700" fontWeight="500">
+                  {t(`Menos de 1 minuto`)}
+                </Text>
+              )
             ) : (
-              <>
-                <Text fontWeight="700">{t('Pedido à caminho')}</Text>
-                {arrivalTime ? (
-                  arrivalTime > 0 ? (
-                    <Text color="gray.700" fontWeight="500">
-                      {t(
-                        `Aprox. ${
-                          arrivalTime > 1 ? arrivalTime + ' minutos' : arrivalTime + ' minuto'
-                        }`
-                      )}
-                    </Text>
-                  ) : (
-                    <Text color="gray.700" fontWeight="500">
-                      {t(`Menos de 1 minuto`)}
-                    </Text>
-                  )
-                ) : (
-                  <Text color="gray.700" fontWeight="500">
-                    {t(`Calculando...`)}
-                  </Text>
-                )}
-              </>
+              <Text color="gray.700" fontWeight="500">
+                {t('Calculando...')}
+              </Text>
             )}
           </Flex>
         </Flex>
       </Box>
     );
   }
-
   if (order.status === 'ready') {
     return (
       <Box
@@ -199,30 +190,26 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
         <Flex flexDir="column" fontWeight="700">
           <Flex justifyContent="space-between">
             <Box>
-              <Text fontSize="xs" lineHeight="lg" fontWeight="500">
+              <Text fontSize="xs" lineHeight="lg" fontWeight="500" translate="no">
                 {`{${order.consumer.name ?? 'N/I'}}`}
               </Text>
               <CodeLink url={url} orderId={order.id} code={order.code} />
             </Box>
             <Flex flexDir="column" fontSize="xs" alignItems="flex-end">
-              <Text color={isNoMatch ? 'red' : 'gray.700'} fontWeight="700" textAlign="end">
-                {orderDispatchingText}
+              <Text
+                color={isNoMatch || isCurrierArrived ? 'red' : 'gray.700'}
+                fontWeight="700"
+                textAlign="end"
+              >
+                {orderDispatchingText ? t(orderDispatchingText) : 'N/E'}
               </Text>
               {isMatched &&
                 (isCurrierArrived ? (
-                  <>
-                    <Text color="red" fontWeight="700">
-                      {t('Entregador no local')}
-                    </Text>
-                    <Text color="black" fontWeight="500">
-                      {t('Nome: ') + order.courier?.name}
-                    </Text>
-                  </>
+                  <Text color="black" fontWeight="500">
+                    {t('Nome: ') + order.courier?.name}
+                  </Text>
                 ) : (
-                  <>
-                    <Text color="gray.700" fontWeight="700">
-                      {t('Entregador à caminho')}
-                    </Text>
+                  <Box>
                     {arrivalTime ? (
                       arrivalTime > 0 ? (
                         <Text color="gray.700" fontWeight="500">
@@ -242,7 +229,7 @@ export const OrdersKanbanListItem = ({ order }: Props) => {
                         {t(`Calculando...`)}
                       </Text>
                     )}
-                  </>
+                  </Box>
                 ))}
             </Flex>
           </Flex>

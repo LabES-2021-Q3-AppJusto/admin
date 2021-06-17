@@ -69,7 +69,7 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
               )}
             </Box>
             <Flex ml="4" flexDir="column">
-              <Text fontSize="xl" color="black">
+              <Text fontSize="xl" color="black" translate="no">
                 {order.courier?.name}
               </Text>
               {joined ? (
@@ -92,7 +92,9 @@ export const DeliveryInfos = ({ order }: DeliveryInfosProps) => {
       <Text mt="4" fontSize="xl" color="black">
         {t('Destino do pedido')}
       </Text>
-      <Text fontSize="sm">{order.destination?.address.description}</Text>
+      <Text fontSize="sm" translate="no">
+        {order.destination?.address.description}
+      </Text>
     </Box>
   );
 };

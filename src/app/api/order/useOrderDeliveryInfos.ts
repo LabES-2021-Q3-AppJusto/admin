@@ -32,11 +32,11 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
     if (!order?.dispatchingStatus) return;
     const getOrderDispatchingText = (status: DispatchingStatus, state?: DispatchingState) => {
       let result = 'Buscando informações...';
-      if (status === 'matched') {
+      if (status === 'matched' || status === 'confirmed') {
         result = 'Buscando entregador';
-        if (state === 'going-pickup') result = 'Entregador à caminho da retirada';
+        if (state === 'going-pickup') result = 'Entregador a caminho da retirada';
         if (state === 'arrived-pickup') result = 'Entregador no local';
-        if (state === 'going-destination') result = 'Entregador à caminho da entrega';
+        if (state === 'going-destination') result = 'Entregador a caminho da entrega';
         if (state === 'arrived-destination') result = 'Entregador no local de entrega';
       } else if (status === 'no-match') result = 'Entregador não encontrado';
       setOrderDispatchingText(result);
@@ -48,7 +48,7 @@ export const useOrderDeliveryInfos = (order?: WithId<Order> | null) => {
   React.useEffect(() => {
     if (!order?.dispatchingStatus) return;
     setIsMatching(order.dispatchingStatus === 'matching');
-    setIsMatched(order.dispatchingStatus === 'matched');
+    setIsMatched(order.dispatchingStatus === 'matched' || order.dispatchingStatus === 'confirmed');
     setIsNoMatch(order.dispatchingStatus === 'no-match');
   }, [order?.dispatchingStatus]);
 

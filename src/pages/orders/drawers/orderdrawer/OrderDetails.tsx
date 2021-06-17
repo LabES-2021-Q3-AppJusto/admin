@@ -82,13 +82,13 @@ export const OrderDetails = ({ order }: DetailsProps) => {
           <SectionTitle mt="10">{t('Forma de pagamento')}</SectionTitle>
           <Text mt="1" fontSize="md">
             {t('Valor do frete:')}{' '}
-            <Text as="span" color="black">
+            <Text as="span" color="black" translate="no">
               {order?.fare?.courier.value ? formatCurrency(order.fare.courier.value) : 'N/E'}
             </Text>
           </Text>
           <Text mt="1" fontSize="md">
             {t('Total pago:')}{' '}
-            <Text as="span" color="black">
+            <Text as="span" color="black" translate="no">
               {order?.fare?.total ? formatCurrency(order.fare.total) : 0}
             </Text>
           </Text>
