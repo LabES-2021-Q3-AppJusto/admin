@@ -68,7 +68,7 @@ const OrdersPage = () => {
       setDateFilter([from, to]);
     } else setDateFilter(undefined);
   }, [searchFrom, searchTo]);
-
+  console.log(orders);
   // UI
   return (
     <>
